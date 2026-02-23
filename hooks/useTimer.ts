@@ -15,6 +15,7 @@ export function useTimer() {
     setSecondsRemaining,
     setPhase,
     setPomodorosCompleted,
+    setJustCompleted,
   } = useTimerStore();
 
   const { focusDuration, shortBreakDuration, longBreakDuration, pomodorosBeforeLong, autoStart } =
@@ -58,6 +59,8 @@ export function useTimer() {
     }
 
     triggerSessionComplete(phase);
+    setJustCompleted(phase);
+    setTimeout(() => setJustCompleted(null), 2500);
 
     setPomodorosCompleted(newCompleted);
     setPhase(nextPhase);
@@ -73,6 +76,7 @@ export function useTimer() {
     setPhase,
     setSecondsRemaining,
     setIsRunning,
+    setJustCompleted,
   ]);
 
   useEffect(() => {

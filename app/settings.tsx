@@ -35,20 +35,20 @@ export default function SettingsScreen() {
     notificationsEnabled, setNotificationsEnabled,
   } = useSettingsStore();
 
-  // When durations change, reset the active timer to reflect new settings
-  const { phase, isRunning, setSecondsRemaining } = useTimerStore();
+  // When durations change, always reset the active timer to the new full duration
+  const { phase, setIsRunning, setSecondsRemaining } = useTimerStore();
 
   const handleFocusChange = (v: number) => {
     setFocusDuration(v);
-    if (phase === 'focus' && !isRunning) setSecondsRemaining(v * 60);
+    if (phase === 'focus') { setIsRunning(false); setSecondsRemaining(v * 60); }
   };
   const handleShortBreakChange = (v: number) => {
     setShortBreakDuration(v);
-    if (phase === 'shortBreak' && !isRunning) setSecondsRemaining(v * 60);
+    if (phase === 'shortBreak') { setIsRunning(false); setSecondsRemaining(v * 60); }
   };
   const handleLongBreakChange = (v: number) => {
     setLongBreakDuration(v);
-    if (phase === 'longBreak' && !isRunning) setSecondsRemaining(v * 60);
+    if (phase === 'longBreak') { setIsRunning(false); setSecondsRemaining(v * 60); }
   };
 
   return (

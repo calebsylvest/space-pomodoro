@@ -6,6 +6,37 @@ import type { Phase } from '@/store/timerStore';
 
 const IS_WEB = Platform.OS === 'web';
 
+// Web audio: synthesise a short completion chime using the Web Audio API
+function playWebChime() {
+  try {
+    const ctx = new AudioContext();
+    const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5
+
+    frequencies.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+
+      const start = ctx.currentTime + i * 0.15;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.3, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
+
+      osc.start(start);
+      osc.stop(start + 0.4);
+    });
+
+    // Close context after chime finishes
+    setTimeout(() => ctx.close(), 1000);
+  } catch {
+    // AudioContext not available (e.g. autoplay policy)
+  }
+}
+
 const PHASE_LABELS: Record<Phase, string> = {
   focus: 'Focus session complete!',
   shortBreak: 'Short break over',
@@ -32,6 +63,10 @@ if (!IS_WEB) {
 export async function triggerSessionComplete(completedPhase: Phase) {
   const { soundEnabled, hapticsEnabled, notificationsEnabled } =
     useSettingsStore.getState();
+
+  if (soundEnabled && IS_WEB) {
+    playWebChime();
+  }
 
   if (hapticsEnabled && !IS_WEB) {
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
