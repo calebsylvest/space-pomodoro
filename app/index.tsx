@@ -14,9 +14,12 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useTimerStore } from '@/store/timerStore';
+import { useTravelStore } from '@/store/travelStore';
+import { getPath } from '@/data/paths';
 import { ProgressRing } from '@/components/ProgressRing';
 import { PomodoroCounter } from '@/components/PomodoroCounter';
 import { Starfield } from '@/components/Starfield';
+import Ship from '@/components/Ship';
 import { Colors } from '@/constants/colors';
 import { MONO } from '@/constants/typography';
 import { formatTime } from '@/utils/format';
@@ -44,6 +47,8 @@ export default function TimerScreen() {
 
   const { pomodorosBeforeLong } = useSettingsStore();
   const { justCompleted } = useTimerStore();
+  const { currentPathId, distanceTraveled } = useTravelStore();
+  const activeTravelPath = currentPathId ? getPath(currentPathId) : null;
 
   const {
     phase,
@@ -71,7 +76,6 @@ export default function TimerScreen() {
 
   const phaseColor = colors[phase as keyof typeof colors] as string;
   const ringSize = isDesktop ? 320 : 280;
-  const missionNumber = Math.floor(pomodorosCompleted / pomodorosBeforeLong) + 1;
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -82,6 +86,22 @@ export default function TimerScreen() {
         <Text style={[styles.appTitle, { color: colors.textSecondary, fontFamily: MONO }]}>
           POMODORO SPACE
         </Text>
+
+        {/* View switcher */}
+        <View style={styles.navGroup}>
+          <Text style={[styles.navActive, { color: colors.accent, fontFamily: MONO }]}>
+            [ SHIP ]
+          </Text>
+          <Text style={[styles.navDot, { color: colors.border, fontFamily: MONO }]}>·</Text>
+          <Link href="/travel" asChild>
+            <Pressable style={styles.navButton}>
+              <Text style={[styles.navInactive, { color: colors.textSecondary, fontFamily: MONO }]}>
+                TRAVEL
+              </Text>
+            </Pressable>
+          </Link>
+        </View>
+
         <View style={styles.headerRight}>
           {isDesktop && (
             <Text style={[styles.shortcutHint, { color: colors.textSecondary, fontFamily: MONO }]}>
@@ -108,12 +128,19 @@ export default function TimerScreen() {
             trackColor={colors.border}
           />
           <View style={[styles.timerOverlay, { width: ringSize, height: ringSize }]}>
+            <Ship size={isDesktop ? 64 : 56} glowColor={phaseColor} />
             <Text style={[styles.timerText, { color: colors.text, fontFamily: MONO }]}>
               {formatTime(secondsRemaining)}
             </Text>
-            <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO }]}>
-              / Mission {missionNumber}
-            </Text>
+            {activeTravelPath ? (
+              <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO }]}>
+                ▲ {distanceTraveled} / {activeTravelPath.totalDistance}
+              </Text>
+            ) : (
+              <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO, opacity: 0.35 }]}>
+                [ SELECT ROUTE ]
+              </Text>
+            )}
           </View>
         </View>
 
@@ -177,6 +204,7 @@ export default function TimerScreen() {
               Space to start / pause
             </Text>
           )}
+
         </View>
       </View>
 
@@ -220,6 +248,27 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 3,
+  },
+  navGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  navActive: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 2,
+  },
+  navInactive: {
+    fontSize: 11,
+    letterSpacing: 2,
+  },
+  navDot: {
+    fontSize: 11,
+  },
+  navButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 6,
   },
   shortcutHint: {
     fontSize: 11,
@@ -324,6 +373,10 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 0.5,
     opacity: 0.4,
+  },
+  travelIndicator: {
+    fontSize: 11,
+    letterSpacing: 2,
   },
   completionBanner: {
     position: 'absolute',

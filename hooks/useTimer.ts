@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useTimerStore } from '@/store/timerStore';
 import { useSettingsStore } from '@/store/settingsStore';
+import { useTravelStore } from '@/store/travelStore';
 import { triggerSessionComplete } from '@/utils/alerts';
 
 export function useTimer() {
@@ -56,6 +57,10 @@ export function useTimer() {
         newCompleted % pomodorosBeforeLong === 0 ? 'longBreak' : 'shortBreak';
     } else {
       nextPhase = 'focus';
+    }
+
+    if (phase === 'focus') {
+      useTravelStore.getState().advanceDistance();
     }
 
     triggerSessionComplete(phase);
