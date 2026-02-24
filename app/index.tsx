@@ -16,20 +16,22 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useTimerStore } from '@/store/timerStore';
 import { ProgressRing } from '@/components/ProgressRing';
 import { PomodoroCounter } from '@/components/PomodoroCounter';
+import { Starfield } from '@/components/Starfield';
 import { Colors } from '@/constants/colors';
+import { MONO } from '@/constants/typography';
 import { formatTime } from '@/utils/format';
 import { requestNotificationPermissions } from '@/utils/alerts';
 
 const PHASE_LABELS = {
-  focus: 'Focus',
-  shortBreak: 'Short Break',
-  longBreak: 'Long Break',
+  focus: 'In Transit',
+  shortBreak: 'In Orbit',
+  longBreak: 'Docked',
 };
 
 const COMPLETION_MESSAGES = {
-  focus: 'Focus complete',
-  shortBreak: 'Break over',
-  longBreak: 'Long break over',
+  focus: 'Destination reached',
+  shortBreak: 'Orbit complete',
+  longBreak: 'Rest complete',
 };
 
 const DESKTOP_BREAKPOINT = 768;
@@ -69,18 +71,20 @@ export default function TimerScreen() {
 
   const phaseColor = colors[phase as keyof typeof colors] as string;
   const ringSize = isDesktop ? 320 : 280;
-  const sessionNumber = Math.floor(pomodorosCompleted / pomodorosBeforeLong) + 1;
+  const missionNumber = Math.floor(pomodorosCompleted / pomodorosBeforeLong) + 1;
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <Starfield />
+
       {/* Header */}
       <View style={[styles.header, isDesktop && styles.headerDesktop]}>
-        <Text style={[styles.appTitle, { color: colors.textSecondary }]}>
+        <Text style={[styles.appTitle, { color: colors.textSecondary, fontFamily: MONO }]}>
           POMODORO SPACE
         </Text>
         <View style={styles.headerRight}>
           {isDesktop && (
-            <Text style={[styles.shortcutHint, { color: colors.textSecondary }]}>
+            <Text style={[styles.shortcutHint, { color: colors.textSecondary, fontFamily: MONO }]}>
               Space · R · S
             </Text>
           )}
@@ -104,11 +108,11 @@ export default function TimerScreen() {
             trackColor={colors.border}
           />
           <View style={[styles.timerOverlay, { width: ringSize, height: ringSize }]}>
-            <Text style={[styles.timerText, { color: colors.text }]}>
+            <Text style={[styles.timerText, { color: colors.text, fontFamily: MONO }]}>
               {formatTime(secondsRemaining)}
             </Text>
-            <Text style={[styles.sessionCount, { color: colors.textSecondary }]}>
-              Session {sessionNumber}
+            <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO }]}>
+              / Mission {missionNumber}
             </Text>
           </View>
         </View>
@@ -116,7 +120,7 @@ export default function TimerScreen() {
         {/* Right / bottom: info + controls */}
         <View style={[styles.controlSection, isDesktop && styles.controlSectionDesktop]}>
           {/* Phase label */}
-          <Text style={[styles.phaseLabel, { color: phaseColor }, isDesktop && styles.phaseLabelDesktop]}>
+          <Text style={[styles.phaseLabel, { color: phaseColor, fontFamily: MONO }, isDesktop && styles.phaseLabelDesktop]}>
             {PHASE_LABELS[phase].toUpperCase()}
           </Text>
 
@@ -136,11 +140,11 @@ export default function TimerScreen() {
               onPress={reset}
               hitSlop={8}
             >
-              <Text style={[styles.secondaryButtonText, { color: colors.textSecondary }]}>
+              <Text style={[styles.secondaryButtonText, { color: colors.textSecondary, fontFamily: MONO }]}>
                 Reset
               </Text>
               {isDesktop && (
-                <Text style={[styles.keyHint, { color: colors.textSecondary }]}>R</Text>
+                <Text style={[styles.keyHint, { color: colors.textSecondary, fontFamily: MONO }]}>R</Text>
               )}
             </Pressable>
 
@@ -148,7 +152,7 @@ export default function TimerScreen() {
               style={[styles.primaryButton, { backgroundColor: phaseColor }]}
               onPress={isRunning ? pause : start}
             >
-              <Text style={styles.primaryButtonText}>
+              <Text style={[styles.primaryButtonText, { fontFamily: MONO }]}>
                 {isRunning ? 'Pause' : 'Start'}
               </Text>
             </Pressable>
@@ -158,18 +162,18 @@ export default function TimerScreen() {
               onPress={skipPhase}
               hitSlop={8}
             >
-              <Text style={[styles.secondaryButtonText, { color: colors.textSecondary }]}>
+              <Text style={[styles.secondaryButtonText, { color: colors.textSecondary, fontFamily: MONO }]}>
                 Skip
               </Text>
               {isDesktop && (
-                <Text style={[styles.keyHint, { color: colors.textSecondary }]}>S</Text>
+                <Text style={[styles.keyHint, { color: colors.textSecondary, fontFamily: MONO }]}>S</Text>
               )}
             </Pressable>
           </View>
 
           {/* Desktop: keyboard shortcut hint for space bar */}
           {isDesktop && (
-            <Text style={[styles.spaceHint, { color: colors.textSecondary }]}>
+            <Text style={[styles.spaceHint, { color: colors.textSecondary, fontFamily: MONO }]}>
               Space to start / pause
             </Text>
           )}
@@ -182,7 +186,7 @@ export default function TimerScreen() {
           styles.completionBanner,
           { backgroundColor: colors[justCompleted as keyof typeof colors] as string },
         ]}>
-          <Text style={styles.completionText}>
+          <Text style={[styles.completionText, { fontFamily: MONO }]}>
             {COMPLETION_MESSAGES[justCompleted]}
           </Text>
         </View>
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 2,
+    letterSpacing: 3,
   },
   shortcutHint: {
     fontSize: 11,
@@ -254,14 +258,15 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 64,
-    fontWeight: '200',
+    fontWeight: '400',
     fontVariant: ['tabular-nums'],
-    letterSpacing: -2,
+    letterSpacing: 2,
   },
-  sessionCount: {
-    fontSize: 13,
-    marginTop: 4,
-    letterSpacing: 0.5,
+  missionCount: {
+    fontSize: 11,
+    marginTop: 8,
+    letterSpacing: 2,
+    opacity: 0.6,
   },
   controlSection: {
     alignItems: 'center',
@@ -274,7 +279,7 @@ const styles = StyleSheet.create({
   phaseLabel: {
     fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 3,
+    letterSpacing: 4,
   },
   phaseLabelDesktop: {
     fontSize: 13,
@@ -294,7 +299,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: '#ffffff',
     fontSize: 17,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   secondaryButton: {
     width: 72,
@@ -306,11 +311,11 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '400',
   },
   keyHint: {
     fontSize: 9,
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: 0.5,
     opacity: 0.5,
     marginTop: 2,
@@ -331,7 +336,7 @@ const styles = StyleSheet.create({
   completionText: {
     color: '#ffffff',
     fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: 0.3,
+    fontWeight: '700',
+    letterSpacing: 2,
   },
 });

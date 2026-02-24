@@ -11,10 +11,11 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useTimerStore } from '@/store/timerStore';
 import { SettingRow } from '@/components/SettingRow';
 import { Colors, ColorTokens } from '@/constants/colors';
+import { MONO } from '@/constants/typography';
 
 function SectionHeader({ title, colors }: { title: string; colors: ColorTokens }) {
   return (
-    <Text style={[styles.sectionHeader, { color: colors.textSecondary }]}>
+    <Text style={[styles.sectionHeader, { color: colors.textSecondary, fontFamily: MONO }]}>
       {title.toUpperCase()}
     </Text>
   );

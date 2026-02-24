@@ -12,32 +12,34 @@ export interface ColorTokens {
   destructive: string;
 }
 
+// Space theme — dark navy, for users in light OS mode
 const light: ColorTokens = {
-  background: '#f5f5f0',
-  surface: '#ffffff',
-  text: '#1a1a2e',
-  textSecondary: '#6b6b80',
-  accent: '#7c6aff',
-  accentMuted: '#c4beff',
-  focus: '#7c6aff',
-  shortBreak: '#4CAF82',
-  longBreak: '#2196CF',
-  border: '#e0e0e8',
-  destructive: '#e05c5c',
+  background: '#111827',
+  surface: '#1f2937',
+  text: '#f9fafb',
+  textSecondary: 'rgba(249, 250, 251, 0.4)',
+  accent: '#ff6b35',
+  accentMuted: 'rgba(255, 107, 53, 0.15)',
+  focus: '#ff6b35',
+  shortBreak: '#00d4aa',
+  longBreak: '#4a8fff',
+  border: 'rgba(249, 250, 251, 0.1)',
+  destructive: '#ff4040',
 };
 
+// Space theme — pure black void
 const dark: ColorTokens = {
-  background: '#0a0a1a',
-  surface: '#12122a',
-  text: '#e8e8f0',
-  textSecondary: '#8888a0',
-  accent: '#7c6aff',
-  accentMuted: '#3d3580',
-  focus: '#7c6aff',
-  shortBreak: '#4CAF82',
-  longBreak: '#2196CF',
-  border: '#1e1e38',
-  destructive: '#e05c5c',
+  background: '#000000',
+  surface: '#111111',
+  text: '#ffffff',
+  textSecondary: 'rgba(255, 255, 255, 0.35)',
+  accent: '#ff6b35',
+  accentMuted: 'rgba(255, 107, 53, 0.12)',
+  focus: '#ff6b35',
+  shortBreak: '#00d4aa',
+  longBreak: '#4a8fff',
+  border: 'rgba(255, 255, 255, 0.08)',
+  destructive: '#ff4040',
 };
 
 export const Colors: Record<'light' | 'dark', ColorTokens> = { light, dark };

@@ -24,8 +24,8 @@ Status markers: `[ ]` todo · `[x]` done · `[-]` in progress · `[~]` deferred
 - [x] Haptic feedback on session complete (native)
 
 ### Remaining
-- [ ] **Audio** — session completion sound via `expo-av` is not yet wired up; the setting exists but plays nothing
-- [ ] **Browser tab title** — update `<title>` to show remaining time while running (web quality-of-life)
+- [x] **Audio** — Web Audio API chime wired in `utils/alerts.ts`; respects `soundEnabled` setting
+- [x] **Browser tab title** — implemented in `hooks/useDocumentTitle.ts`; updates every second while running
 - [~] **Background timer** — deferred to Phase 4 (mobile)
 - [~] **Prevent sleep** — deferred to Phase 4 (mobile)
 - [~] **Mobile smoke test** — deferred to Phase 4 (mobile)
@@ -168,9 +168,9 @@ Data views and charts derived from the session history.
 - [x] ~~Notifications crash on web~~ — `expo-notifications` not supported on web; fixed with `Platform` guard + browser Notification API fallback
 - [x] ~~Progress ring fills on load~~ — Reanimated SVG init issue on web; fixed with CSS transition approach
 - [x] ~~Timer ignores persisted settings on load~~ — timer store hardcoded 25:00; fixed with mount sync from settings
-- [ ] **Settings don't reset timer when changed mid-session** — changing duration while timer is paused mid-session doesn't update the display until Reset is pressed (only affects paused state, not running)
-- [ ] **Long break counter display** — after a long break, the pomodoro dots don't visually reset for the next cycle (completed count keeps climbing correctly but dots look off)
-- [ ] **No "session complete" screen** — timer just advances silently to next phase; a brief visual celebration would improve the experience
+- [x] **Settings don't reset timer when changed mid-session** — settings changes immediately call `setSecondsRemaining` in `app/settings.tsx`
+- [x] **Long break counter display** — dots reset correctly via `positionInCycle % total` logic in `components/PomodoroCounter.tsx`
+- [x] **No "session complete" screen** — bottom banner implemented in `app/index.tsx`; shows for 2.5s with phase-specific message
 - [ ] **Web: settings opens as page, not modal** — on web, modal presentation pushes to a full page; acceptable for now but could be improved
 
 ---
