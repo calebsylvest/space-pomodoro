@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { mmkvStorage } from '@/utils/storage';
 import { getPath } from '@/data/paths';
+import { useTimerStore } from '@/store/timerStore';
 
 interface TravelState {
   currentPathId: string | null;
@@ -22,8 +23,10 @@ export const useTravelStore = create<TravelState>()(
       shipSpeed: 10,
       visitedNodeIds: [],
 
-      choosePath: (pathId) =>
-        set({ currentPathId: pathId, distanceTraveled: 0, visitedNodeIds: [] }),
+      choosePath: (pathId) => {
+        useTimerStore.getState().setPomodorosCompleted(0);
+        set({ currentPathId: pathId, distanceTraveled: 0, visitedNodeIds: [] });
+      },
 
       advanceDistance: () => {
         const { currentPathId, distanceTraveled, shipSpeed, visitedNodeIds } = get();
@@ -43,8 +46,10 @@ export const useTravelStore = create<TravelState>()(
         });
       },
 
-      reset: () =>
-        set({ currentPathId: null, distanceTraveled: 0, visitedNodeIds: [] }),
+      reset: () => {
+        useTimerStore.getState().setPomodorosCompleted(0);
+        set({ currentPathId: null, distanceTraveled: 0, visitedNodeIds: [] });
+      },
     }),
     {
       name: 'travel',

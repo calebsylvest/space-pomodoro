@@ -12,7 +12,6 @@ import { Link } from 'expo-router';
 import { useTimer } from '@/hooks/useTimer';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
-import { useSettingsStore } from '@/store/settingsStore';
 import { useTimerStore } from '@/store/timerStore';
 import { useTravelStore } from '@/store/travelStore';
 import { getPath } from '@/data/paths';
@@ -45,10 +44,10 @@ export default function TimerScreen() {
   const { width } = useWindowDimensions();
   const isDesktop = Platform.OS === 'web' && width >= DESKTOP_BREAKPOINT;
 
-  const { pomodorosBeforeLong } = useSettingsStore();
   const { justCompleted } = useTimerStore();
   const { currentPathId, distanceTraveled } = useTravelStore();
   const activeTravelPath = currentPathId ? getPath(currentPathId) : null;
+  const cycleLength = activeTravelPath?.nodes.length ?? 4;
 
   const {
     phase,
@@ -133,11 +132,16 @@ export default function TimerScreen() {
               {formatTime(secondsRemaining)}
             </Text>
             {activeTravelPath ? (
-              <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO }]}>
-                ▲ {distanceTraveled} / {activeTravelPath.totalDistance}
-              </Text>
+              <View style={styles.routeInfo}>
+                <Text style={[styles.routeName, { color: colors.textSecondary, fontFamily: MONO }]}>
+                  {activeTravelPath.label.toUpperCase()}
+                </Text>
+                <Text style={[styles.routeProgress, { color: colors.textSecondary, fontFamily: MONO }]}>
+                  ▲ {distanceTraveled} / {activeTravelPath.totalDistance}
+                </Text>
+              </View>
             ) : (
-              <Text style={[styles.missionCount, { color: colors.textSecondary, fontFamily: MONO, opacity: 0.35 }]}>
+              <Text style={[styles.routeProgress, { color: colors.textSecondary, fontFamily: MONO, opacity: 0.35 }]}>
                 [ SELECT ROUTE ]
               </Text>
             )}
@@ -154,7 +158,7 @@ export default function TimerScreen() {
           {/* Pomodoro dots */}
           <PomodoroCounter
             completed={pomodorosCompleted}
-            total={pomodorosBeforeLong}
+            total={cycleLength}
             phase={phase}
             color={phaseColor}
             trackColor={colors.border}
@@ -311,9 +315,19 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
     letterSpacing: 2,
   },
-  missionCount: {
-    fontSize: 11,
+  routeInfo: {
+    alignItems: 'center',
     marginTop: 8,
+    gap: 2,
+  },
+  routeName: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    opacity: 0.5,
+  },
+  routeProgress: {
+    fontSize: 11,
     letterSpacing: 2,
     opacity: 0.6,
   },

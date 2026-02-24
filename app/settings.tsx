@@ -29,7 +29,6 @@ export default function SettingsScreen() {
     focusDuration, setFocusDuration,
     shortBreakDuration, setShortBreakDuration,
     longBreakDuration, setLongBreakDuration,
-    pomodorosBeforeLong, setPomodorosBeforeLong,
     autoStart, setAutoStart,
     soundEnabled, setSoundEnabled,
     hapticsEnabled, setHapticsEnabled,
@@ -84,14 +83,6 @@ export default function SettingsScreen() {
             value={longBreakDuration}
             min={1} max={60} unit=" min"
             onChange={handleLongBreakChange}
-            colors={colors}
-          />
-          <SettingRow
-            type="stepper"
-            label="Pomodoros Before Long Break"
-            value={pomodorosBeforeLong}
-            min={1} max={8}
-            onChange={setPomodorosBeforeLong}
             colors={colors}
           />
         </View>

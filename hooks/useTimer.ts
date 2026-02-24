@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useTimerStore } from '@/store/timerStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { useTravelStore } from '@/store/travelStore';
+import { getPath } from '@/data/paths';
 import { triggerSessionComplete } from '@/utils/alerts';
 
 export function useTimer() {
@@ -19,8 +20,10 @@ export function useTimer() {
     setJustCompleted,
   } = useTimerStore();
 
-  const { focusDuration, shortBreakDuration, longBreakDuration, pomodorosBeforeLong, autoStart } =
-    useSettingsStore();
+  const { focusDuration, shortBreakDuration, longBreakDuration, autoStart } = useSettingsStore();
+
+  const { currentPathId } = useTravelStore();
+  const cycleLength = currentPathId ? (getPath(currentPathId)?.nodes.length ?? 4) : 4;
 
   // Sync timer to persisted settings on first mount (MMKV is synchronous, so
   // settings are already hydrated by the time this runs).
@@ -54,7 +57,7 @@ export function useTimer() {
     let nextPhase: typeof phase;
     if (phase === 'focus') {
       nextPhase =
-        newCompleted % pomodorosBeforeLong === 0 ? 'longBreak' : 'shortBreak';
+        newCompleted % cycleLength === 0 ? 'longBreak' : 'shortBreak';
     } else {
       nextPhase = 'focus';
     }
@@ -74,7 +77,7 @@ export function useTimer() {
   }, [
     phase,
     pomodorosCompleted,
-    pomodorosBeforeLong,
+    cycleLength,
     autoStart,
     durationForPhase,
     setPomodorosCompleted,

@@ -6,7 +6,6 @@ interface SettingsState {
   focusDuration: number;        // minutes
   shortBreakDuration: number;   // minutes
   longBreakDuration: number;    // minutes
-  pomodorosBeforeLong: number;
   autoStart: boolean;
   soundEnabled: boolean;
   hapticsEnabled: boolean;
@@ -14,7 +13,6 @@ interface SettingsState {
   setFocusDuration: (v: number) => void;
   setShortBreakDuration: (v: number) => void;
   setLongBreakDuration: (v: number) => void;
-  setPomodorosBeforeLong: (v: number) => void;
   setAutoStart: (v: boolean) => void;
   setSoundEnabled: (v: boolean) => void;
   setHapticsEnabled: (v: boolean) => void;
@@ -27,7 +25,6 @@ export const useSettingsStore = create<SettingsState>()(
       focusDuration: 25,
       shortBreakDuration: 5,
       longBreakDuration: 15,
-      pomodorosBeforeLong: 4,
       autoStart: false,
       soundEnabled: true,
       hapticsEnabled: true,
@@ -35,7 +32,6 @@ export const useSettingsStore = create<SettingsState>()(
       setFocusDuration: (focusDuration) => set({ focusDuration }),
       setShortBreakDuration: (shortBreakDuration) => set({ shortBreakDuration }),
       setLongBreakDuration: (longBreakDuration) => set({ longBreakDuration }),
-      setPomodorosBeforeLong: (pomodorosBeforeLong) => set({ pomodorosBeforeLong }),
       setAutoStart: (autoStart) => set({ autoStart }),
       setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
       setHapticsEnabled: (hapticsEnabled) => set({ hapticsEnabled }),
